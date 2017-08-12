@@ -4,7 +4,8 @@ import online.dinghuiye.api.entity.ResultStatus;
 import online.dinghuiye.api.entity.RowRecord;
 import online.dinghuiye.api.entity.RowRecordHandleResult;
 import online.dinghuiye.api.entity.TransactionMode;
-import online.dinghuiye.core.persistence.testcase.SchoolMan;
+import online.dinghuiye.core.persistence.testcase.User;
+import online.dinghuiye.core.persistence.testcase.UserExtraInfo;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -18,9 +19,9 @@ import java.util.*;
 
 /**
  * @author Strangeen
- * on 2017/8/6
+ * at 2017/8/6
  */
-public class TestRowRecordPersistencorHibernateImpl {
+public class TestRowRecordPersistencorHibernateImplForCascadePojo {
 
     private SessionFactory factory;
     private RowRecordPersistencorHibernateImpl handler;
@@ -51,9 +52,16 @@ public class TestRowRecordPersistencorHibernateImpl {
                 Map<Class<?>, Object> pojoMap = new HashMap<>();
                 rr.setPojoRecordMap(pojoMap);
 
-                SchoolMan man = new SchoolMan();
-                man.setName("测试" + i);
-                pojoMap.put(SchoolMan.class, man);
+                User user = new User();
+                user.setUsername("123456abc" + i);
+
+                UserExtraInfo info = new UserExtraInfo();
+                info.setName("test" + i);
+                info.setUser(user);
+
+                user.setInfo(info);
+
+                pojoMap.put(User.class, user);
 
                 rr.setResult(new RowRecordHandleResult(ResultStatus.SUCCESS, null));
             }
@@ -61,37 +69,34 @@ public class TestRowRecordPersistencorHibernateImpl {
     }
 
 
-
+    // 没报错即可写入
     @Test
     public void testPersistSingleton() {
-
-        dataList.forEach(rr ->
-                rr.getPojoRecordMap().values().forEach(obj ->
-                        Assert.assertNull(((SchoolMan) obj).getId())));
 
         long start = System.currentTimeMillis();
         handler.persist(dataList, TransactionMode.SINGLETON);
         System.out.println("耗时：" + (System.currentTimeMillis() - start) + "ms");
 
-        dataList.forEach(rr ->
-                rr.getPojoRecordMap().values().forEach(obj ->
-                        Assert.assertNotNull(((SchoolMan) obj).getId())));
+        for (RowRecord rr : dataList) {
+            Assert.assertEquals(ResultStatus.SUCCESS, rr.getResult().getResult());
+            Assert.assertNotNull(rr.get(User.class).getId());
+            Assert.assertNotNull(rr.get(User.class).getInfo().getId());
+        }
     }
 
+    // 报错均不能写入
     @Test
     public void testPersistMultiple() {
-
-        dataList.forEach(rr ->
-                rr.getPojoRecordMap().values().forEach(obj ->
-                        Assert.assertNull(((SchoolMan) obj).getId())));
 
         long start = System.currentTimeMillis();
         handler.persist(dataList, TransactionMode.MULTIPLE);
         System.out.println("耗时：" + (System.currentTimeMillis() - start) + "ms");
 
-        dataList.forEach(rr ->
-                rr.getPojoRecordMap().values().forEach(obj ->
-                        Assert.assertNotNull(((SchoolMan) obj).getId())));
+        for (RowRecord rr : dataList) {
+            Assert.assertEquals(ResultStatus.SUCCESS, rr.getResult().getResult());
+            Assert.assertNotNull(rr.get(User.class).getId());
+            Assert.assertNotNull(rr.get(User.class).getInfo().getId());
+        }
     }
 
     @Test
@@ -100,10 +105,12 @@ public class TestRowRecordPersistencorHibernateImpl {
         Double[] expectProcessArr = new Double[]{50.0, 100.0};
         List<Double> actualProcessList = new ArrayList<>();
 
-        handler.persist(dataList, TransactionMode.SINGLETON, (Observable o, Object arg) -> {
-            System.out.println(arg);
-            actualProcessList.add((Double) arg);
-        });
+        handler.persist(dataList, TransactionMode.SINGLETON,
+                (Observable o, Object arg) -> {
+                    System.out.println(arg);
+                    actualProcessList.add((Double) arg);
+                }
+        );
 
         Assert.assertArrayEquals(expectProcessArr, actualProcessList.toArray());
     }
@@ -114,10 +121,12 @@ public class TestRowRecordPersistencorHibernateImpl {
         Double[] expectProcessArr = new Double[]{50.0, 100.0};
         List<Double> actualProcessList = new ArrayList<>();
 
-        handler.persist(dataList, TransactionMode.MULTIPLE, (Observable o, Object arg) -> {
-            System.out.println(arg);
-            actualProcessList.add((Double) arg);
-        });
+        handler.persist(dataList, TransactionMode.MULTIPLE,
+                (Observable o, Object arg) -> {
+                    System.out.println(arg);
+                    actualProcessList.add((Double) arg);
+                }
+        );
 
         Assert.assertArrayEquals(expectProcessArr, actualProcessList.toArray());
     }

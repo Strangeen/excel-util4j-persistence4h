@@ -32,6 +32,8 @@
         <!--<property name="hbm2ddl.auto">update</property>-->
 
         <mapping class="online.dinghuiye.core.persistence.testcase.SchoolMan"/>
+        <mapping class="online.dinghuiye.core.persistence.testcase.User"/>
+        <mapping class="online.dinghuiye.core.persistence.testcase.UserExtraInfo"/>
 
     </session-factory>
 

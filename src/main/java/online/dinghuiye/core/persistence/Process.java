@@ -3,33 +3,32 @@ package online.dinghuiye.core.persistence;
 import java.util.Observable;
 
 /**
- * Created by Strangeen on 2017/8/6.
+ * @author Strangeen
+ * on 2017/8/6
  */
 public class Process extends Observable {
 
-    //private Double process;
+    private Long excuted;
+    private Long total;
 
-    private Integer excuted;
-    private Integer total;
-
-    public Process(Integer total) {
-        this.excuted = 0;
+    public Process(Long total) {
+        this.excuted = 0L;
         this.total = total;
     }
 
-    public Integer getExcuted() {
+    public Long getExcuted() {
         return excuted;
     }
 
-    public void setExcuted(Integer excuted) {
+    public void setExcuted(Long excuted) {
         this.excuted = excuted;
     }
 
-    public Integer getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 

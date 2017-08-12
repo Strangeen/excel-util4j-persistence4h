@@ -6,7 +6,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Strangeen on 2017/8/3.
+ * @author Strangeen
+ * on 2017/8/3
  */
 @Entity
 @DynamicInsert(true)
@@ -43,6 +44,7 @@ public class SchoolMan {
     public Integer getId() {
         return id;
     }
+
 
     public void setId(Integer id) {
         this.id = id;
