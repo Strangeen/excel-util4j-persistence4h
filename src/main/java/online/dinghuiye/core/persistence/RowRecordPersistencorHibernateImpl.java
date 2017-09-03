@@ -1,10 +1,8 @@
 package online.dinghuiye.core.persistence;
 
-import online.dinghuiye.api.entity.ResultStatus;
-import online.dinghuiye.api.entity.RowRecord;
-import online.dinghuiye.api.entity.RowRecordHandleResult;
+import online.dinghuiye.api.entity.Process;
+import online.dinghuiye.api.entity.*;
 import online.dinghuiye.api.persistence.RowRecordPersistencor;
-import online.dinghuiye.api.entity.TransactionMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -12,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Observer;
 
 /**
  * hibernate作为持久化层的实现
  *
- * @author Strangeen
- * on 2017/8/4
+ * @author Strangeen on 2017/8/4
+ *
+ * @author Strangeen on 2017/9/3
+ * @version 2.1.0
  */
 public class RowRecordPersistencorHibernateImpl implements RowRecordPersistencor {
 
@@ -34,13 +33,9 @@ public class RowRecordPersistencorHibernateImpl implements RowRecordPersistencor
     }
 
     @Override
-    public void persist(List<RowRecord> rowRecordList, TransactionMode mode, Observer processObserver) {
+    public void persist(List<RowRecord> rowRecordList, TransactionMode mode, Process process) {
 
-        Process process = null;
-        if (processObserver != null) {
-            process = new Process((long) rowRecordList.size());
-            process.addObserver(processObserver);
-        }
+        process.setNode(ProcessNode.PERSISTENCE);
 
         // 存储操作
         if (mode == TransactionMode.SINGLETON)

@@ -1,9 +1,7 @@
 package online.dinghuiye.core.persistence;
 
-import online.dinghuiye.api.entity.ResultStatus;
-import online.dinghuiye.api.entity.RowRecord;
-import online.dinghuiye.api.entity.RowRecordHandleResult;
-import online.dinghuiye.api.entity.TransactionMode;
+import online.dinghuiye.api.entity.Process;
+import online.dinghuiye.api.entity.*;
 import online.dinghuiye.core.persistence.testcase.SchoolMan;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -14,11 +12,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @author Strangeen
- * on 2017/8/6
+ * @author Strangeen on 2017/8/6
+ *
+ * @author Strangeen on 2017/9/3
+ * @version 2.1.0
  */
 public class TestRowRecordPersistencorHibernateImpl {
 
@@ -97,29 +100,15 @@ public class TestRowRecordPersistencorHibernateImpl {
     @Test
     public void testPersistSingletonWithObserver() {
 
-        Double[] expectProcessArr = new Double[]{50.0, 100.0};
-        List<Double> actualProcessList = new ArrayList<>();
-
-        handler.persist(dataList, TransactionMode.SINGLETON, (Observable o, Object arg) -> {
-            System.out.println(arg);
-            actualProcessList.add((Double) arg);
-        });
-
-        Assert.assertArrayEquals(expectProcessArr, actualProcessList.toArray());
+        Process process = new Process((long) dataList.size());
+        handler.persist(dataList, TransactionMode.SINGLETON, process);
     }
 
     @Test
     public void testPersistMultipleWithObserver() {
 
-        Double[] expectProcessArr = new Double[]{50.0, 100.0};
-        List<Double> actualProcessList = new ArrayList<>();
-
-        handler.persist(dataList, TransactionMode.MULTIPLE, (Observable o, Object arg) -> {
-            System.out.println(arg);
-            actualProcessList.add((Double) arg);
-        });
-
-        Assert.assertArrayEquals(expectProcessArr, actualProcessList.toArray());
+        Process process = new Process((long) dataList.size());
+        handler.persist(dataList, TransactionMode.MULTIPLE, process);
     }
 
     @After
