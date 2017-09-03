@@ -35,7 +35,8 @@ public class RowRecordPersistencorHibernateImpl implements RowRecordPersistencor
     @Override
     public void persist(List<RowRecord> rowRecordList, TransactionMode mode, Process process) {
 
-        process.setNode(ProcessNode.PERSISTENCE);
+        if (process != null)
+            process.setNode(ProcessNode.PERSISTENCE);
 
         // 存储操作
         if (mode == TransactionMode.SINGLETON)
